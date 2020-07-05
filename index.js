@@ -4,14 +4,16 @@
 "use strict";
 require("dotenv").config();
 
-const axios = require("axios").default;
+const axios = require("axios"),
+	fs = require("fs");
 
 // Add a valid subscription key and endpoint to your environment variables.
 let subscriptionKey = process.env["FACE_SUBSCRIPTION_KEY"];
-let endpoint = process.env["FACE_ENDPOINT"] + "/face/v1.0/detect";
+let endpoint = process.env["FACE_ENDPOINT"] + "/detect";
 
 // Optionally, replace with your own image URL (for example a .jpg or .png URL).
-let imageUrl = "https://www.concordia.ca/cunews/main/stories/2019/05/10/2019-person-of-the-year-awards-gala-lino-saputo-jr-receives-the-top-honour/_jcr_content/parsys/image.img.jpg/1557429810479.jpg"
+let imageUrl =
+	"https://www.concordia.ca/cunews/main/stories/2019/05/10/2019-person-of-the-year-awards-gala-lino-saputo-jr-receives-the-top-honour/_jcr_content/parsys/image.img.jpg/1557429810479.jpg";
 // let imageUrl = "https://www.statnews.com/wp-content/uploads/2020/01/STAT_Wuhan_Chicago_Coronavirus_AP_20024618829122-645x645.jpg"
 // let imageUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/faces.jpg";
 
@@ -25,10 +27,11 @@ axios({
 		returnFaceAttributes:
 			"age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise",
 	},
-	data: {
-		url: imageUrl,
+	data: fs.createReadStream("./woman.jpg"),
+	headers: {
+		"Content-Type": "application/octet-stream",
+		"Ocp-Apim-Subscription-Key": subscriptionKey,
 	},
-	headers: { "Ocp-Apim-Subscription-Key": subscriptionKey },
 })
 	.then(function (response) {
 		console.log("Status text: " + response.status);
